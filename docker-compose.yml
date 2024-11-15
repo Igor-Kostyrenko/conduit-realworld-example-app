@@ -1,0 +1,46 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - DEV_DB_USERNAME=postgres
+      - DEV_DB_PASSWORD=superpass
+      - DEV_DB_NAME=database_development
+      - DEV_DB_HOSTNAME=postgres
+      - DEV_DB_DIALECT=postgres
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    # command: ["sh", "-c", "npm run sqlz -- db:seed:all && npm run dev"]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: superpass
+      POSTGRES_DB: database_development
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

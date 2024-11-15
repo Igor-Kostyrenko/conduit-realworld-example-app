@@ -12,8 +12,13 @@ const articlesRoutes = require("./routes/articles");
 const profilesRoutes = require("./routes/profiles");
 const tagsRoutes = require("./routes/tags");
 
+
+
+
 const app = express();
-app.use(cors());
+// app.use(cors());
+app.use(cors({ origin: 'http://localhost:3000' }));
+
 app.use(express.json());
 
 (async () => {
@@ -43,3 +48,16 @@ app.use(errorHandler);
 app.listen(PORT, () =>
   console.log(`Server running on http://localhost:${PORT}`),
 );
+
+
+async function testDatabaseConnection() {
+  try {
+    await sequelize.authenticate();
+    console.log("Connection to the database has been established successfully.");
+  } catch (error) {
+    console.error("Unable to connect to the database:", error);
+    process.exit(1); // Закриваємо процес, якщо підключення не вдалося
+  }
+}
+
+testDatabaseConnection();

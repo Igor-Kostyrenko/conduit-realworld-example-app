@@ -1,0 +1,152 @@
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  annotations:
+    meta.helm.sh/release-name: swg-nginx-proxy-https
+    meta.helm.sh/release-namespace: sigproxy
+  creationTimestamp: '2024-10-09T01:08:56Z'
+  finalizers:
+    - finalizer.keda.sh
+  generation: 6
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    scaledobject.keda.sh/name: swg-nginx-proxy-https-scaled-object
+  managedFields:
+    - apiVersion: keda.sh/v1alpha1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:meta.helm.sh/release-name: {}
+            f:meta.helm.sh/release-namespace: {}
+          f:labels:
+            .: {}
+            f:app.kubernetes.io/managed-by: {}
+        f:spec:
+          .: {}
+          f:advanced:
+            .: {}
+            f:horizontalPodAutoscalerConfig:
+              .: {}
+              f:behavior:
+                .: {}
+                f:scaleDown:
+                  .: {}
+                  f:policies: {}
+                  f:stabilizationWindowSeconds: {}
+          f:scaleTargetRef:
+            .: {}
+            f:name: {}
+      manager: helm
+      operation: Update
+      time: '2024-10-09T01:08:56Z'
+    - apiVersion: keda.sh/v1alpha1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:finalizers:
+            .: {}
+            v:"finalizer.keda.sh": {}
+          f:labels:
+            f:scaledobject.keda.sh/name: {}
+      manager: keda
+      operation: Update
+      time: '2024-10-09T01:09:16Z'
+    - apiVersion: keda.sh/v1alpha1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:spec:
+          f:maxReplicaCount: {}
+          f:minReplicaCount: {}
+          f:triggers: {}
+      manager: node-fetch
+      operation: Update
+      time: '2024-11-13T16:11:07Z'
+    - apiVersion: keda.sh/v1alpha1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:status:
+          .: {}
+          f:conditions: {}
+          f:externalMetricNames: {}
+          f:health:
+            .: {}
+            f:s0-prometheus-swg_total_req_per_sec:
+              .: {}
+              f:numberOfFailures: {}
+              f:status: {}
+          f:hpaName: {}
+          f:lastActiveTime: {}
+          f:originalReplicaCount: {}
+          f:scaleTargetGVKR:
+            .: {}
+            f:group: {}
+            f:kind: {}
+            f:resource: {}
+            f:version: {}
+          f:scaleTargetKind: {}
+      manager: keda
+      operation: Update
+      subresource: status
+      time: '2024-11-14T08:37:43Z'
+  name: swg-nginx-proxy-https-scaled-object
+  namespace: sigproxy
+  resourceVersion: '44701790'
+  uid: 51f3d226-b1d3-43db-8731-8a137bc21306
+  selfLink: >-
+    /apis/keda.sh/v1alpha1/namespaces/sigproxy/scaledobjects/swg-nginx-proxy-https-scaled-object
+status:
+  conditions:
+    - message: ScaledObject is defined correctly and is ready for scaling
+      reason: ScaledObjectReady
+      status: 'True'
+      type: Ready
+    - message: Scaling is performed because triggers are active
+      reason: ScalerActive
+      status: 'True'
+      type: Active
+    - message: No fallbacks are active on this scaled object
+      reason: NoFallbackFound
+      status: 'False'
+      type: Fallback
+  externalMetricNames:
+    - s0-prometheus-swg_total_req_per_sec
+  health:
+    s0-prometheus-swg_total_req_per_sec:
+      numberOfFailures: 0
+      status: Happy
+  hpaName: keda-hpa-swg-nginx-proxy-https-scaled-object
+  lastActiveTime: '2024-11-14T08:37:43Z'
+  originalReplicaCount: 1
+  scaleTargetGVKR:
+    group: apps
+    kind: Deployment
+    resource: deployments
+    version: v1
+  scaleTargetKind: apps/v1.Deployment
+spec:
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          policies:
+            - periodSeconds: 60
+              type: Percent
+              value: 10
+            - periodSeconds: 60
+              type: Pods
+              value: 5
+          stabilizationWindowSeconds: 300
+  maxReplicaCount: 3
+  minReplicaCount: 2
+  scaleTargetRef:
+    name: swg-nginx-proxy-https
+  triggers:
+    - metadata:
+        metricName: swg_total_req_per_sec
+        query: >-
+          (max_over_time(swg_total_req_per_sec:nginx_http_requests:rate5m{DC=~"stage_aws_us-west-2_2_0n"}[180m]))
+        serverAddress: https://thanos.swg.sysengmml.opendns.com
+        threshold: '300'
+      type: prometheus
